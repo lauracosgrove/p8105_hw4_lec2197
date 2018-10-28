@@ -1,0 +1,65 @@
+---
+title: "Homework 4"
+author: "Laura Cosgrove"
+date: "10/28/2018"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(viridis)
+library(plotly)
+library(p8105.datasets)
+library(flexdashboard)
+```
+
+```{r data, include = FALSE}
+data(ny_noaa)
+
+ny_noaa <- ny_noaa %>% 
+  separate(col = date, into = c("year", "month", "day"), sep = "-") %>% 
+  mutate(tmax = as.numeric(tmax)/10, tmin = as.numeric(tmin)/10, prcp = prcp/100, snow = snow/10, snwd = snwd/10 ) %>% 
+  rename(tmax_ºC = tmax, tmin_ºC = tmin, prcp_cm = prcp , snow_cm = snow, snwd_cm = snwd)
+
+```
+
+
+
+Column {data-width=650}
+----------------------------------------------------------------------
+
+### Chart A
+
+```{r plotly scatterplot}
+
+ny_noaa %>% 
+  mutate(month = as.numeric(month)) %>% 
+  filter(month == 1 | month == 7) %>%
+  mutate(month = recode(month, !!!month.name)) %>% 
+  group_by(month, year, id) %>%
+  summarize(mean_tmax = mean(tmax_ºC)) %>% 
+  plot_ly(x = ~year, y = ~mean_tmax, type = "scatter", mode = "markers",
+          alpha = 0.5,
+          color = ~month)
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r plotly boxplot}
+
+```
+
+### Chart C
+
+```{r plotly calendar plot}
+
+
+
+```
